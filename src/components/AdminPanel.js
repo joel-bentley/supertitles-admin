@@ -5,7 +5,7 @@ import {
   ListGroup,
   ListGroupItem,
 } from 'react-bootstrap';
-import { db, auth } from '../util/firebase';
+import { db } from '../util/firebase';
 
 class AdminPanel extends Component {
   state = {
@@ -59,14 +59,14 @@ class AdminPanel extends Component {
     );
   };
 
-  logout = () => {
-    const { history } = this.props;
-    auth
-      .signOut()
-      .then(console.log('Logged out'))
-      .then(history.push('/login'))
-      .catch(error => console.log(error.message));
-  };
+  // logout = () => {
+  //   const { history } = this.props;
+  //   auth
+  //     .signOut()
+  //     .then(console.log('Logged out'))
+  //     .then(history.push('/login'))
+  //     .catch(error => console.log(error.message));
+  // };
 
   render() {
     const currentIndex = this.state.current.index;
@@ -75,9 +75,9 @@ class AdminPanel extends Component {
         <ButtonToolbar>
           <Button onClick={() => this.changeIndex(-1)}>Previous</Button>
           <Button onClick={() => this.changeIndex(1)}>Next</Button>
-          <Button style={{ float: 'right' }} onClick={this.logout}>
+          {/*<Button style={{ float: 'right' }} onClick={this.logout}>
             Logout
-          </Button>
+          </Button>*/}
         </ButtonToolbar>
         <ListGroup style={{ marginTop: '10px' }}>
           {this.state.supertitles.map((supertitle, i) => (

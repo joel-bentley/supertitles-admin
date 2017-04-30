@@ -1,19 +1,20 @@
 import React from 'react';
-import { HashRouter as Router, Route } from 'react-router-dom';
+// import { HashRouter as Router, Route } from 'react-router-dom';
 
-import ProtectedRoute from './components/ProtectedRoute';
+// import ProtectedRoute from './components/ProtectedRoute';
 import AdminPanel from './components/AdminPanel';
-import Login from './components/Login';
+// import Login from './components/Login';
 
 import './App.css';
 
 const App = () => (
-  <Router>
+  <AdminPanel />
+  /*<Router>
     <div>
       <ProtectedRoute exact path="/" component={AdminPanel} />
       <Route path="/login" component={Login} />
     </div>
-  </Router>
+  </Router>*/
 );
 
 export default App;
