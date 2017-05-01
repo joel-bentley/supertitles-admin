@@ -9,27 +9,32 @@ import { db } from '../util/firebase';
 
 class AdminPanel extends Component {
   state = {
-    current: {},
+    currentIndex: 0,
     supertitles: [],
+    isStarted: false,
   };
 
   componentDidMount() {
-    this.currentRef = db.ref('current');
+    this.currentIndexRef = db.ref('current/index');
     this.supertitlesRef = db.ref('supertitles');
 
-    this.currentRef.once('value', snap => {
-      this.setState({
-        current: snap.val(),
-      });
+    this.currentIndexRef.once('value', indexSnapshot => {
+      const currentIndex = indexSnapshot.val();
+      this.setState({ currentIndex });
+      if (currentIndex !== null && typeof currentIndex === 'number') {
+        this.setState({ isStarted: true });
+      }
     });
 
-    this.supertitlesRef.once('value', snap => {
-      this.setState({ supertitles: snap.val() });
+    this.supertitlesRef.once('value', supertitlesSnaphot => {
+      const supertitles = supertitlesSnaphot.val();
+      this.setState({ supertitles });
     });
   }
 
-  componentWillUnmount() {
-    this.currentRef.off();
+  async componentWillUnmount() {
+    await this.currentIndexRef.remove();
+    this.currentIndexRef.off();
     this.supertitlesRef.off();
   }
 
@@ -37,7 +42,7 @@ class AdminPanel extends Component {
     this.setState(
       prevState => {
         const arrayLength = prevState.supertitles.length;
-        const prevIndex = prevState.current.index;
+        const prevIndex = prevState.currentIndex;
 
         let newIndex = prevIndex + step;
 
@@ -49,14 +54,21 @@ class AdminPanel extends Component {
           newIndex = 0;
         }
 
-        return {
-          current: {
-            index: newIndex,
-          },
-        };
+        return { currentIndex: newIndex };
       },
-      () => this.currentRef.set(this.state.current)
+      () => this.currentIndexRef.set(this.state.currentIndex)
     );
+  };
+
+  handleStartStop = () => {
+    this.setState(prevState => {
+      const newIsStarted = !prevState.isStarted;
+      const newIndex = newIsStarted ? 0 : null;
+
+      this.currentIndexRef.set(newIndex);
+
+      return { isStarted: newIsStarted, currentIndex: newIndex };
+    });
   };
 
   // logout = () => {
@@ -69,19 +81,38 @@ class AdminPanel extends Component {
   // };
 
   render() {
-    const currentIndex = this.state.current.index;
+    const { currentIndex, isStarted } = this.state;
     return (
       <div className="App container">
         <ButtonToolbar>
-          <Button onClick={() => this.changeIndex(-1)}>Previous</Button>
-          <Button onClick={() => this.changeIndex(1)}>Next</Button>
+          <Button
+            bsStyle={isStarted ? 'danger' : 'success'}
+            onClick={this.handleStartStop}
+          >
+            {isStarted ? <div>Stop Sending</div> : <div>Start Sending</div>}
+          </Button>
+
+          {isStarted &&
+            <Button bsStyle="info" onClick={() => this.changeIndex(-1)}>
+              {'<- Previous'}
+            </Button>}
+
+          {isStarted &&
+            <Button bsStyle="info" onClick={() => this.changeIndex(1)}>
+              {'Next ->'}
+            </Button>}
+
           {/*<Button style={{ float: 'right' }} onClick={this.logout}>
             Logout
           </Button>*/}
         </ButtonToolbar>
-        <ListGroup style={{ marginTop: '10px' }}>
+        <ListGroup style={{ marginTop: '25px' }}>
           {this.state.supertitles.map((supertitle, i) => (
-            <ListGroupItem key={`supertitle-${i}`} active={i === currentIndex}>
+            <ListGroupItem
+              key={`supertitle-${i}`}
+              active={i === currentIndex}
+              disabled={!isStarted}
+            >
               {supertitle.text}
             </ListGroupItem>
           ))}
