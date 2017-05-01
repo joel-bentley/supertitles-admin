@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   ButtonToolbar,
   Button,
+  Glyphicon,
   ListGroup,
   ListGroupItem,
 } from 'react-bootstrap';
@@ -86,6 +87,7 @@ class AdminPanel extends Component {
       <div className="App container">
         <ButtonToolbar>
           <Button
+            style={{ marginRight: 50 }}
             bsStyle={isStarted ? 'danger' : 'success'}
             onClick={this.handleStartStop}
           >
@@ -94,12 +96,13 @@ class AdminPanel extends Component {
 
           {isStarted &&
             <Button bsStyle="info" onClick={() => this.changeIndex(-1)}>
-              {'<- Previous'}
+              <Glyphicon style={{ marginRight: 5 }} glyph="arrow-left" />
+              Previous
             </Button>}
 
           {isStarted &&
             <Button bsStyle="info" onClick={() => this.changeIndex(1)}>
-              {'Next ->'}
+              Next <Glyphicon style={{ marginLeft: 5 }} glyph="arrow-right" />
             </Button>}
 
           {/*<Button style={{ float: 'right' }} onClick={this.logout}>
