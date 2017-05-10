@@ -1,12 +1,12 @@
 import React from 'react';
-import {
-  Button,
-  Form,
-  FormGroup,
-  Col,
-  FormControl,
-  ControlLabel,
-} from 'react-bootstrap';
+
+import Button from 'react-bootstrap/lib/Button';
+import Form from 'react-bootstrap/lib/Form';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import Col from 'react-bootstrap/lib/Col';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+
 import { auth } from '../util/firebase';
 
 const Login = ({ history }) => {

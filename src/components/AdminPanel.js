@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import {
-  ButtonToolbar,
-  Button,
-  Glyphicon,
-  ListGroup,
-  ListGroupItem,
-} from 'react-bootstrap';
+import React from 'react';
+
+import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
+import Button from 'react-bootstrap/lib/Button';
+import Glyphicon from 'react-bootstrap/lib/Glyphicon';
+import ListGroup from 'react-bootstrap/lib/ListGroup';
+import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
+
 import { db } from '../util/firebase';
 
-class AdminPanel extends Component {
+class AdminPanel extends React.Component {
   state = {
     currentIndex: 0,
     supertitles: [],
@@ -17,7 +17,7 @@ class AdminPanel extends Component {
 
   componentDidMount() {
     this.currentIndexRef = db.ref('current/index');
-    this.supertitlesRef = db.ref('supertitles');
+    this.currentProgramRef = db.ref('current/program');
 
     this.currentIndexRef.once('value', indexSnapshot => {
       const currentIndex = indexSnapshot.val();
@@ -27,16 +27,19 @@ class AdminPanel extends Component {
       }
     });
 
-    this.supertitlesRef.once('value', supertitlesSnaphot => {
-      const supertitles = supertitlesSnaphot.val();
-      this.setState({ supertitles });
+    this.currentProgramRef.once('value', programSnapshot => {
+      const currentProgram = programSnapshot.val();
+
+      db.ref(currentProgram).once('value', supertitlesSnaphot => {
+        const supertitles = supertitlesSnaphot.val();
+        this.setState({ supertitles });
+        console.log({supertitles});
+      });
     });
   }
 
   async componentWillUnmount() {
     await this.currentIndexRef.remove();
-    this.currentIndexRef.off();
-    this.supertitlesRef.off();
   }
 
   changeIndex = step => {
