@@ -148,15 +148,17 @@ class AdminPanel extends React.Component {
                   backgroundColor: slide.index === currentIndex
                     ? '#337ab7'
                     : '#fff',
+                  borderColor: '#171717',
                 }}
                 disabled={!isStarted}
               >
-                <ListGroup style={{ marginTop: '18px' }}>
+                <b>Slide {slide.index + 1}</b>
+                <ListGroup style={{ marginTop: '5px' }}>
                   <ListGroupItem>
-                    {slide.notes}
+                    <b>Notes:</b> {slide.notes}
                   </ListGroupItem>
                   <ListGroupItem>
-                    {slide.text}
+                    <b>Text:</b> {slide.text}
                   </ListGroupItem>
                 </ListGroup>
               </ListGroupItem>
