@@ -6,12 +6,30 @@ import Glyphicon from 'react-bootstrap/lib/Glyphicon';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 
+import FlipMove from 'react-flip-move';
+
 import { db } from '../util/firebase';
+
+const NUM_ITEMS_TO_SHOW = 4;
+
+function sliceAround(arr, index) {
+  let begin = index - Math.floor(NUM_ITEMS_TO_SHOW / 2) + 1;
+  if (begin < 0) {
+    begin = 0;
+  }
+  let end = begin + NUM_ITEMS_TO_SHOW;
+  if (end > arr.length) {
+    end = arr.length;
+  }
+  return arr.slice(begin, end);
+}
 
 class AdminPanel extends React.Component {
   state = {
     currentIndex: 0,
-    supertitles: [],
+    lastIndex: 0,
+    slides: [],
+    name: '',
     isStarted: false,
   };
 
@@ -21,7 +39,8 @@ class AdminPanel extends React.Component {
 
     this.currentIndexRef.once('value', indexSnapshot => {
       const currentIndex = indexSnapshot.val();
-      this.setState({ currentIndex });
+      const lastIndex = currentIndex || 0;
+      this.setState({ currentIndex, lastIndex });
       if (currentIndex !== null && typeof currentIndex === 'number') {
         this.setState({ isStarted: true });
       }
@@ -31,9 +50,14 @@ class AdminPanel extends React.Component {
       const currentProgram = programSnapshot.val();
 
       db.ref(currentProgram).once('value', supertitlesSnaphot => {
-        const supertitles = supertitlesSnaphot.val();
-        this.setState({ supertitles });
-        console.log({supertitles});
+        const { slides, name } = supertitlesSnaphot.val();
+
+        slides.forEach((slide, i) => {
+          slide.index = i;
+        });
+
+        this.setState({ slides, name });
+        // console.log({ slides });
       });
     });
   }
@@ -45,7 +69,7 @@ class AdminPanel extends React.Component {
   changeIndex = step => {
     this.setState(
       prevState => {
-        const arrayLength = prevState.supertitles.length;
+        const arrayLength = prevState.slides.length;
         const prevIndex = prevState.currentIndex;
 
         let newIndex = prevIndex + step;
@@ -58,7 +82,7 @@ class AdminPanel extends React.Component {
           newIndex = 0;
         }
 
-        return { currentIndex: newIndex };
+        return { currentIndex: newIndex, lastIndex: newIndex };
       },
       () => this.currentIndexRef.set(this.state.currentIndex)
     );
@@ -67,7 +91,7 @@ class AdminPanel extends React.Component {
   handleStartStop = () => {
     this.setState(prevState => {
       const newIsStarted = !prevState.isStarted;
-      const newIndex = newIsStarted ? 0 : null;
+      const newIndex = newIsStarted ? prevState.lastIndex : null;
 
       this.currentIndexRef.set(newIndex);
 
@@ -85,7 +109,10 @@ class AdminPanel extends React.Component {
   // };
 
   render() {
-    const { currentIndex, isStarted } = this.state;
+    const { currentIndex, isStarted, slides } = this.state;
+
+    const slidesSlice = sliceAround(slides, currentIndex);
+
     return (
       <div className="App container">
         <ButtonToolbar>
@@ -113,15 +140,28 @@ class AdminPanel extends React.Component {
           </Button>*/}
         </ButtonToolbar>
         <ListGroup style={{ marginTop: '25px' }}>
-          {this.state.supertitles.map((supertitle, i) => (
-            <ListGroupItem
-              key={`supertitle-${i}`}
-              active={i === currentIndex}
-              disabled={!isStarted}
-            >
-              {supertitle.text}
-            </ListGroupItem>
-          ))}
+          <FlipMove duration={750} easing="ease-out">
+            {slidesSlice.map(slide => (
+              <ListGroupItem
+                key={`slide-${slide.index}`}
+                style={{
+                  backgroundColor: slide.index === currentIndex
+                    ? '#337ab7'
+                    : '#fff',
+                }}
+                disabled={!isStarted}
+              >
+                <ListGroup style={{ marginTop: '18px' }}>
+                  <ListGroupItem>
+                    {slide.notes}
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    {slide.text}
+                  </ListGroupItem>
+                </ListGroup>
+              </ListGroupItem>
+            ))}
+          </FlipMove>
         </ListGroup>
       </div>
     );
