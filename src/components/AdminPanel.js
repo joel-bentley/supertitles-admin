@@ -109,23 +109,39 @@ class AdminPanel extends React.Component {
   // };
 
   render() {
-    const { currentIndex, isStarted, slides } = this.state;
+    const { currentIndex, lastIndex, isStarted, slides } = this.state;
 
-    const slidesSlice = isStarted ? sliceAround(slides, currentIndex) : slides;
+    // const slidesSlice = isStarted ? sliceAround(slides, currentIndex) : slides;
+    const slidesSlice = sliceAround(slides, lastIndex);
 
     return (
       <div className="App container">
         <ButtonToolbar>
           <Button
-            style={{ marginRight: 50 }}
+            style={{ marginRight: 5 }}
             bsStyle={isStarted ? 'danger' : 'success'}
             onClick={this.handleStartStop}
           >
-            {isStarted ? <div>Stop Sending</div> : <div>Start Sending</div>}
+            {isStarted
+              ? <div>Stop Sending</div>
+              : <div>Start Sending Slide {lastIndex + 1}</div>}
           </Button>
 
+          {!isStarted &&
+            lastIndex !== 0 &&
+            <Button
+              bsStyle="warning"
+              onClick={() => this.setState({ lastIndex: 0 })}
+            >
+              Reset to Slide 1
+            </Button>}
+
           {isStarted &&
-            <Button bsStyle="info" onClick={() => this.changeIndex(-1)}>
+            <Button
+              bsStyle="info"
+              style={{ marginLeft: 50 }}
+              onClick={() => this.changeIndex(-1)}
+            >
               <Glyphicon style={{ marginRight: 5 }} glyph="arrow-left" />
               Previous
             </Button>}
