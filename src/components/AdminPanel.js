@@ -111,7 +111,7 @@ class AdminPanel extends React.Component {
   render() {
     const { currentIndex, isStarted, slides } = this.state;
 
-    const slidesSlice = sliceAround(slides, currentIndex);
+    const slidesSlice = isStarted ? sliceAround(slides, currentIndex) : slides;
 
     return (
       <div className="App container">
