@@ -1,20 +1,48 @@
 import React from 'react';
-// import { HashRouter as Router, Route } from 'react-router-dom';
+import { auth, isAuthenticated } from './util/firebase';
 
-// import ProtectedRoute from './components/ProtectedRoute';
 import AdminPanel from './components/AdminPanel';
-// import Login from './components/Login';
+import Login from './components/Login';
 
 import './App.css';
 
-const App = () => (
-  <AdminPanel />
-  /*<Router>
-    <div>
-      <ProtectedRoute exact path="/" component={AdminPanel} />
-      <Route path="/login" component={Login} />
-    </div>
-  </Router>*/
-);
+class App extends React.Component {
+  state = { authState: false, error: null };
+  componentDidMount() {
+    this.updateAuthState();
+  }
+  updateAuthState = () => {
+    this.setState({ authState: isAuthenticated() });
+  };
+
+  authorize = async (email, password) => {
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      console.log('Logged in');
+      this.updateAuthState();
+      this.setState({ error: null });
+    } catch (error) {
+      console.log(error.message);
+      this.setState({ error: error.message });
+    }
+  };
+
+  logout = async () => {
+    try {
+      await auth.signOut();
+      console.log('Logged out');
+      this.updateAuthState();
+      this.setState({ error: null });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  render() {
+    const { authState, error } = this.state;
+    return authState
+      ? <AdminPanel logout={this.logout} />
+      : <Login authorize={this.authorize} error={error} />;
+  }
+}
 
 export default App;

@@ -88,6 +88,13 @@ class AdminPanel extends React.Component {
     );
   };
 
+  handleLogout = async () => {
+    if (this.state.currentIndex !== null) {
+      await this.currentIndexRef.set(null);
+    }
+    this.props.logout();
+  };
+
   handleStartStop = () => {
     this.setState(prevState => {
       const newIsStarted = !prevState.isStarted;
@@ -98,15 +105,6 @@ class AdminPanel extends React.Component {
       return { isStarted: newIsStarted, currentIndex: newIndex };
     });
   };
-
-  // logout = () => {
-  //   const { history } = this.props;
-  //   auth
-  //     .signOut()
-  //     .then(console.log('Logged out'))
-  //     .then(history.push('/login'))
-  //     .catch(error => console.log(error.message));
-  // };
 
   render() {
     const { currentIndex, lastIndex, isStarted, slides } = this.state;
@@ -151,9 +149,9 @@ class AdminPanel extends React.Component {
               Next <Glyphicon style={{ marginLeft: 5 }} glyph="arrow-right" />
             </Button>}
 
-          {/*<Button style={{ float: 'right' }} onClick={this.logout}>
+          <Button style={{ float: 'right' }} onClick={this.handleLogout}>
             Logout
-          </Button>*/}
+          </Button>
         </ButtonToolbar>
         <ListGroup style={{ marginTop: '25px' }}>
           <FlipMove duration={750} easing="ease-out">

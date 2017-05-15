@@ -7,19 +7,9 @@ import Col from 'react-bootstrap/lib/Col';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 
-import { auth } from '../util/firebase';
-
-const Login = ({ history }) => {
+const Login = ({ authorize, error }) => {
   let emailInput = null;
   let passwordInput = null;
-
-  const authorize = () => {
-    auth
-      .signInWithEmailAndPassword(emailInput.value, passwordInput.value)
-      .then(console.log('Logged in'))
-      .then(() => history.push('/'))
-      .catch(error => console.log(error.message));
-  };
 
   return (
     <div className="container">
@@ -34,8 +24,9 @@ const Login = ({ history }) => {
             <FormControl
               type="email"
               placeholder="Email"
-              inputRef={ref => emailInput = ref}
+              inputRef={ref => (emailInput = ref)}
             />
+            {error ? error : ''}
           </Col>
         </FormGroup>
 
@@ -47,14 +38,16 @@ const Login = ({ history }) => {
             <FormControl
               type="password"
               placeholder="Password"
-              inputRef={ref => passwordInput = ref}
+              inputRef={ref => (passwordInput = ref)}
             />
           </Col>
         </FormGroup>
 
         <FormGroup>
           <Col smOffset={2} sm={10}>
-            <Button onClick={authorize}>
+            <Button
+              onClick={() => authorize(emailInput.value, passwordInput.value)}
+            >
               Sign in
             </Button>
           </Col>
