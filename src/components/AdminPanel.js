@@ -120,21 +120,24 @@ class AdminPanel extends React.Component {
             bsStyle={isStarted ? 'danger' : 'success'}
             onClick={this.handleStartStop}
           >
-            {isStarted
-              ? <div>Stop Sending</div>
-              : <div>Start Sending Slide {lastIndex + 1}</div>}
+            {isStarted ? (
+              <div>Stop Sending</div>
+            ) : (
+              <div>Start Sending Slide {lastIndex + 1}</div>
+            )}
           </Button>
 
           {!isStarted &&
-            lastIndex !== 0 &&
-            <Button
-              bsStyle="warning"
-              onClick={() => this.setState({ lastIndex: 0 })}
-            >
-              Reset to Slide 1
-            </Button>}
+            lastIndex !== 0 && (
+              <Button
+                bsStyle="warning"
+                onClick={() => this.setState({ lastIndex: 0 })}
+              >
+                Reset to Slide 1
+              </Button>
+            )}
 
-          {isStarted &&
+          {isStarted && (
             <Button
               bsStyle="info"
               style={{ marginLeft: 50 }}
@@ -142,12 +145,14 @@ class AdminPanel extends React.Component {
             >
               <Glyphicon style={{ marginRight: 5 }} glyph="arrow-left" />
               Previous
-            </Button>}
+            </Button>
+          )}
 
-          {isStarted &&
+          {isStarted && (
             <Button bsStyle="info" onClick={() => this.changeIndex(1)}>
               Next <Glyphicon style={{ marginLeft: 5 }} glyph="arrow-right" />
-            </Button>}
+            </Button>
+          )}
 
           <Button style={{ float: 'right' }} onClick={this.handleLogout}>
             Logout
@@ -159,9 +164,8 @@ class AdminPanel extends React.Component {
               <ListGroupItem
                 key={`slide-${slide.index}`}
                 style={{
-                  backgroundColor: slide.index === currentIndex
-                    ? '#337ab7'
-                    : '#fff',
+                  backgroundColor:
+                    slide.index === currentIndex ? '#337ab7' : '#fff',
                   borderColor: '#171717',
                 }}
                 disabled={!isStarted}

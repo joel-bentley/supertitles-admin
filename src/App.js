@@ -39,9 +39,11 @@ class App extends React.Component {
   };
   render() {
     const { authState, error } = this.state;
-    return authState
-      ? <AdminPanel logout={this.logout} />
-      : <Login authorize={this.authorize} error={error} />;
+    return authState ? (
+      <AdminPanel logout={this.logout} />
+    ) : (
+      <Login authorize={this.authorize} error={error} />
+    );
   }
 }
 
