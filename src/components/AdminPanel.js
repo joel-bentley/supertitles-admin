@@ -107,13 +107,14 @@ class AdminPanel extends React.Component {
   };
 
   render() {
-    const { currentIndex, lastIndex, isStarted, slides } = this.state;
+    const { name, currentIndex, lastIndex, isStarted, slides } = this.state;
 
     // const slidesSlice = isStarted ? sliceAround(slides, currentIndex) : slides;
     const slidesSlice = sliceAround(slides, lastIndex);
 
     return (
       <div className="App container">
+        <div className="text-center">Slides for:  <b>{name}</b></div>
         <ButtonToolbar>
           <Button
             style={{ marginRight: 5 }}
@@ -174,6 +175,9 @@ class AdminPanel extends React.Component {
                 <ListGroup style={{ marginTop: '5px' }}>
                   <ListGroupItem>
                     <b>Notes:</b> {slide.notes}
+                  </ListGroupItem>
+                  <ListGroupItem>
+                    <b>Title:</b> {slide.title}
                   </ListGroupItem>
                   <ListGroupItem>
                     <b>Text:</b> {slide.text}
